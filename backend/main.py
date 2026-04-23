@@ -169,12 +169,19 @@ async def get_metrics():
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
-    api_key = os.getenv("GOOGLE_API_KEY")
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
-            json={"contents": [{"parts": [{"text": request.message}]}]}
-        )
-        data = response.json()
-        reply = data["candidates"][0]["content"]["parts"][0]["text"]
-        return {"response": reply}
+    """Proxies user question to Google Gemini API"""
+    try:
+        api_key = os.getenv("GOOGLE_API_KEY", "")
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
+                json={
+                    "system_instruction": {"parts": [{"text": "You are ElectIQ, an expert on elections and voting. Answer briefly in 2-3 sentences."}]},
+                    "contents": [{"parts": [{"text": request.message}]}]
+                }
+            )
+            data = resp.json()
+            reply = data["candidates"][0]["content"]["parts"][0]["text"]
+            return {"response": reply}
+    except Exception:
+        return {"response": "Elections are the foundation of democracy. Please explore our timeline and FAQ for detailed information."}
