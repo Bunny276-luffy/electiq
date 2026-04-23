@@ -24,10 +24,6 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-import google.cloud.logging
-client = google.cloud.logging.Client()
-client.setup_logging()
-
 # --- Models ---
 class ChatRequest(BaseModel):
     message: str
