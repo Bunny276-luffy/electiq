@@ -68,7 +68,7 @@ export default function Quiz() {
   if (!questions.length) return null
 
   return (
-    <section id="quiz" className="section" style={{ maxWidth: '700px', margin: '0 auto' }}>
+    <section id="quiz" className="section" aria-label="Knowledge Quiz" style={{ maxWidth: '700px', margin: '0 auto' }}>
       <div className="text-center mb-8">
         <h2>Knowledge <span className="gradient-text">Quiz</span></h2>
         <p>Test your understanding of the election process.</p>
@@ -76,29 +76,29 @@ export default function Quiz() {
 
       <div className="glass-card" style={{ padding: '2.5rem' }}>
         {showResult ? (
-          <div className="text-center" style={{ animation: 'fadeIn 0.5s ease-in' }}>
-            <Award size={64} className="mb-4" style={{ color: 'var(--accent-orange)', margin: '0 auto' }} />
+          <div className="text-center" style={{ animation: 'fadeIn 0.5s ease-in' }} aria-live="polite">
+            <Award size={64} className="mb-4" style={{ color: 'var(--accent-orange)', margin: '0 auto' }} aria-hidden="true" />
             <h3 className="mb-2">Quiz Complete!</h3>
             <p style={{ fontSize: '1.25rem', marginBottom: '2rem' }}>
               You scored <strong className="gradient-text" style={{ fontSize: '1.5rem' }}>{score}</strong> out of {questions.length}
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button className="btn btn-outline" onClick={restart}>Try Again</button>
-              <button className="btn btn-primary" onClick={() => alert(`I scored ${score}/${questions.length} on ElectIQ!`)}>
-                <Share2 size={18} /> Share Score
+              <button className="btn btn-outline" aria-label="Restart Quiz" onClick={restart}>Try Again</button>
+              <button className="btn btn-primary" aria-label="Share Quiz Score" onClick={() => alert(`I scored ${score}/${questions.length} on ElectIQ!`)}>
+                <Share2 size={18} aria-hidden="true" /> Share Score
               </button>
             </div>
           </div>
         ) : (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', color: 'var(--text-secondary)' }} aria-live="polite">
               <span>Question {currentIndex + 1} of {questions.length}</span>
               <span>Score: {score}</span>
             </div>
             
             <h3 className="mb-6" style={{ minHeight: '3rem' }}>{questions[currentIndex].question}</h3>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} role="radiogroup" aria-label="Quiz Options">
               {questions[currentIndex].options.map((option, i) => {
                 const isCorrect = option === questions[currentIndex].answer;
                 const isSelected = selectedAnswer === option;
@@ -120,6 +120,9 @@ export default function Quiz() {
                   <button
                     key={i}
                     className="btn"
+                    role="radio"
+                    aria-checked={isSelected}
+                    aria-label={`Select option: ${option}`}
                     disabled={!!selectedAnswer}
                     style={{
                       background: bgColor,
@@ -141,7 +144,7 @@ export default function Quiz() {
             
             {selectedAnswer && (
               <div style={{ marginTop: '2rem', textAlign: 'right', animation: 'fadeIn 0.3s ease' }}>
-                <button className="btn btn-primary" onClick={handleNext}>
+                <button className="btn btn-primary" aria-label={currentIndex + 1 < questions.length ? 'Go to Next Question' : 'See Quiz Results'} onClick={handleNext}>
                   {currentIndex + 1 < questions.length ? 'Next Question' : 'See Results'}
                 </button>
               </div>

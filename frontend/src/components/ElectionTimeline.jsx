@@ -15,11 +15,17 @@ export default function ElectionTimeline() {
   const [activeStage, setActiveStage] = useState(null)
 
   return (
-    <section id="timeline" className="section">
+    <section id="timeline" className="section" aria-label="Election Timeline">
       <h2 className="text-center mb-12">Election <span className="gradient-text">Timeline</span></h2>
       <div className="hide-scrollbar" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', padding: '1rem 0.5rem 2rem' }}>
         {stages.map((stage, index) => (
-          <div key={stage.id} className="glass-card" style={{ 
+          <div key={stage.id} 
+            role="button"
+            aria-expanded={activeStage === index}
+            aria-label={`View details for ${stage.title}`}
+            tabIndex={0}
+            onKeyDown={(e) => { if(e.key === 'Enter') setActiveStage(activeStage === index ? null : index) }}
+            className="glass-card" style={{ 
               minWidth: '320px', padding: '1.5rem', cursor: 'pointer',
               transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
               transform: activeStage === index ? 'translateY(-10px)' : 'none',

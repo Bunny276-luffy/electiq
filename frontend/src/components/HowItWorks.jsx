@@ -14,20 +14,25 @@ export default function HowItWorks() {
   const [selectedStep, setSelectedStep] = useState(null);
 
   return (
-    <section id="how-it-works" className="section">
+    <section id="how-it-works" className="section" aria-label="How Voting Works">
       <div className="text-center mb-12">
         <h2>How <span className="gradient-text">Voting Works</span></h2>
         <p style={{ maxWidth: '600px', margin: '1rem auto' }}>A simple step-by-step process of casting your vote democratically. Click a card to learn more.</p>
       </div>
       <div className="grid-3">
         {steps.map(step => (
-          <div key={step.id} className="glass-card clickable-card" style={{ padding: '2rem', textAlign: 'center', cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s' }}
+          <div key={step.id} 
+            role="button"
+            aria-label={`Read more about step ${step.id}: ${step.title}`}
+            tabIndex={0}
+            onKeyDown={(e) => { if(e.key === 'Enter') setSelectedStep(step) }}
+            className="glass-card clickable-card" style={{ padding: '2rem', textAlign: 'center', cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s' }}
             onClick={() => setSelectedStep(step)}
             onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
             onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
           >
             <div style={{ width: '4rem', height: '4rem', margin: '0 auto 1.5rem', background: 'rgba(255, 107, 0, 0.2)', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <step.icon size={28} color="var(--accent-orange)" />
+              <step.icon size={28} color="var(--accent-orange)" aria-hidden="true" />
             </div>
             <h3 className="mb-2">Step {step.id}: {step.title}</h3>
             <p style={{ fontSize: '0.9rem' }}>{step.desc}</p>
@@ -36,13 +41,13 @@ export default function HowItWorks() {
       </div>
 
       {selectedStep && (
-        <div className="modal-overlay" onClick={() => setSelectedStep(null)}>
+        <div className="modal-overlay" onClick={() => setSelectedStep(null)} aria-modal="true" role="dialog" aria-label={`${selectedStep.title} Details`}>
           <div className="glass-card" style={{ maxWidth: '500px', width: '90%', padding: '2rem', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setSelectedStep(null)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}>
-              <X size={24} />
+            <button aria-label="Close modal" onClick={() => setSelectedStep(null)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}>
+              <X size={24} aria-hidden="true" />
             </button>
             <div style={{ width: '4rem', height: '4rem', margin: '0 0 1.5rem', background: 'rgba(255, 107, 0, 0.2)', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <selectedStep.icon size={28} color="var(--accent-orange)" />
+              <selectedStep.icon size={28} color="var(--accent-orange)" aria-hidden="true" />
             </div>
             <h2 className="mb-4">Step {selectedStep.id}: {selectedStep.title}</h2>
             <p style={{ fontSize: '1.1rem', lineHeight: 1.6, color: 'var(--text-primary)' }}>{selectedStep.detail}</p>

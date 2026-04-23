@@ -19,11 +19,17 @@ export default function FAQ() {
   const toggle = (i) => setOpenIndex(openIndex === i ? null : i)
 
   return (
-    <section id="faq" className="section" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <section id="faq" className="section" aria-label="Frequently Asked Questions" style={{ maxWidth: '800px', margin: '0 auto' }}>
       <h2 className="text-center mb-12">Common <span className="gradient-text">Questions</span></h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {faqs.map((faq, i) => (
-          <div key={i} className="glass-card" style={{ 
+          <div key={i} className="glass-card" 
+            role="button"
+            aria-expanded={openIndex === i}
+            aria-label={`Toggle answer for ${faq.q}`}
+            tabIndex={0}
+            onKeyDown={(e) => { if(e.key === 'Enter') toggle(i) }}
+            style={{ 
               padding: '1.5rem', cursor: 'pointer',
               borderLeft: openIndex === i ? '4px solid var(--accent-orange)' : '1px solid var(--glass-border)',
               transition: 'all 0.3s'
@@ -31,7 +37,7 @@ export default function FAQ() {
             onClick={() => toggle(i)}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 500 }}>{faq.q}</h4>
-              {openIndex === i ? <ChevronUp size={20} color="var(--accent-orange)"/> : <ChevronDown size={20} color="var(--text-secondary)"/>}
+              {openIndex === i ? <ChevronUp size={20} color="var(--accent-orange)" aria-hidden="true"/> : <ChevronDown size={20} color="var(--text-secondary)" aria-hidden="true"/>}
             </div>
             <div style={{ 
               maxHeight: openIndex === i ? '200px' : '0', 

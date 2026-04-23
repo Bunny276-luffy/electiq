@@ -1,3 +1,4 @@
 fastapi
 uvicorn
 pytest
+google-cloud-logging==3.5.0

@@ -69,6 +69,8 @@ export default function ChatBot() {
     <>
       <button 
         id="chat-toggle-btn"
+        aria-label="Toggle ChatBot"
+        aria-expanded={isOpen}
         style={{
           position: 'fixed', bottom: '2rem', right: '2rem',
           width: '4rem', height: '4rem', borderRadius: '50%',
@@ -79,10 +81,13 @@ export default function ChatBot() {
         }}
         onClick={() => setIsOpen(true)}
       >
-        <MessageSquare color="white" size={24} />
+        <MessageSquare color="white" size={24} aria-hidden="true" />
       </button>
 
-      <div className="glass-card" style={{
+      <div className="glass-card" 
+        role="dialog" 
+        aria-label="ElectIQ Assistant Chat"
+        style={{
           position: 'fixed', bottom: isOpen ? '2rem' : '-100%', right: '2rem',
           width: '380px', height: '600px', maxWidth: 'calc(100vw - 4rem)',
           display: 'flex', flexDirection: 'column', zIndex: 100,
@@ -99,15 +104,15 @@ export default function ChatBot() {
             <div style={{ background: 'linear-gradient(135deg, var(--accent-orange), var(--accent-green))', width: '10px', height: '10px', borderRadius: '50%' }}></div>
             <h3 style={{ fontSize: '1.1rem', margin: 0 }}>ElectIQ Assistant</h3>
           </div>
-          <button onClick={() => setIsOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}><X size={20} /></button>
+          <button aria-label="Close ChatBot" onClick={() => setIsOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}><X size={20} aria-hidden="true" /></button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }} className="hide-scrollbar">
+        <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }} className="hide-scrollbar" aria-live="polite">
           {messages.map((msg, i) => (
             <div key={i} style={{ display: 'flex', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', gap: '0.75rem', alignItems: 'flex-start' }}>
               {msg.role === 'bot' && (
                 <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(135deg, var(--accent-orange), var(--accent-green))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <MessageSquare size={14} color="white" />
+                  <MessageSquare size={14} color="white" aria-hidden="true" />
                 </div>
               )}
               <div style={{ maxWidth: '80%', padding: '0.75rem 1rem', borderRadius: msg.role === 'user' ? '1rem 0.25rem 1rem 1rem' : '0.25rem 1rem 1rem 1rem', background: msg.role === 'user' ? 'var(--accent-orange)' : 'rgba(255,255,255,0.1)', fontSize: '0.95rem', lineHeight: 1.5 }}>
@@ -120,7 +125,7 @@ export default function ChatBot() {
           {loading && (
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
               <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(135deg, var(--accent-orange), var(--accent-green))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MessageSquare size={14} color="white" />
+                <MessageSquare size={14} color="white" aria-hidden="true" />
               </div>
               <div style={{ padding: '0.75rem 1rem', borderRadius: '0.25rem 1rem 1rem 1rem', background: 'rgba(255,255,255,0.1)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                 Thinking...
@@ -130,9 +135,9 @@ export default function ChatBot() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div style={{ padding: '0.5rem 1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', background: 'rgba(255,255,255,0.01)' }}>
+        <div style={{ padding: '0.5rem 1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', background: 'rgba(255,255,255,0.01)' }} aria-label="Suggested Questions">
           {suggestedQuestions.map((sq, i) => (
-             <button key={i} onClick={() => sendMessage(sq)} style={{
+             <button key={i} aria-label={`Ask: ${sq}`} onClick={() => sendMessage(sq)} style={{
                background: 'rgba(255, 107, 0, 0.1)', border: '1px solid rgba(255, 107, 0, 0.3)',
                color: 'var(--accent-orange)', borderRadius: '1rem', padding: '0.4rem 0.8rem',
                fontSize: '0.8rem', cursor: 'pointer', transition: 'background 0.2s'
@@ -143,11 +148,11 @@ export default function ChatBot() {
         </div>
 
         <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '0 0 1rem 1rem' }}>
-          <input type="text" placeholder="Ask about elections..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          <input type="text" aria-label="Type a message to the assistant" placeholder="Ask about elections..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '2rem', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} />
-          <button onClick={handleSend} disabled={!input.trim() || loading}
+          <button aria-label="Send Message" onClick={handleSend} disabled={!input.trim() || loading}
             style={{ width: '2.8rem', height: '2.8rem', borderRadius: '50%', background: input.trim() && !loading ? 'var(--accent-orange)' : 'rgba(255,255,255,0.1)', border: 'none', cursor: input.trim() && !loading ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', color: input.trim() && !loading ? 'white' : 'var(--text-secondary)' }}>
-            <Send size={16} />
+            <Send size={16} aria-hidden="true" />
           </button>
         </div>
       </div>
