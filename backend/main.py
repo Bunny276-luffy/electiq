@@ -1,8 +1,9 @@
 import os
 import logging
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -17,6 +18,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -128,48 +130,55 @@ QUIZ_DATA = [
 # --- Endpoints ---
 
 @app.get("/api/timeline", tags=["Information"])
-async def get_timeline():
+async def get_timeline(response: Response):
     """
     GET /api/timeline
     Returns all election stages with title, description, duration and rules.
     Returns:
         List[dict]: A list of election stage objects
     """
+    response.headers["X-Content-Type-Options"] = "nosniff"
     return TIMELINE_DATA
 
 @app.get("/api/faq", tags=["Information"])
-async def get_faq():
+async def get_faq(response: Response):
     """
     GET /api/faq
     Returns the FAQ list with questions and answers.
     Returns:
         List[dict]: A list of FAQ objects
     """
+    response.headers["X-Content-Type-Options"] = "nosniff"
     return FAQ_DATA
 
 @app.get("/api/quiz", tags=["Information"])
-async def get_quiz():
+async def get_quiz(response: Response):
     """
     GET /api/quiz
     Returns 5 quiz questions with options and the correct answer.
     Returns:
         List[dict]: A list of quiz question objects
     """
+    response.headers["X-Content-Type-Options"] = "nosniff"
     return QUIZ_DATA
 
 @app.get("/api/metrics", tags=["Information"])
-async def get_metrics():
+async def get_metrics(response: Response):
     """
     GET /api/metrics
     Returns application metrics and status.
     Returns:
         dict: A basic metrics object.
     """
+    response.headers["X-Content-Type-Options"] = "nosniff"
     return {"status": "ok", "active_users": 42}
 
 @app.post("/api/chat")
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, response: Response):
     """Proxies user question to Google Gemini API"""
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    if len(request.message) > 500:
+        raise HTTPException(status_code=400, detail="Message too long")
     try:
         api_key = os.getenv("GOOGLE_API_KEY", "")
         async with httpx.AsyncClient(timeout=30.0) as client:
