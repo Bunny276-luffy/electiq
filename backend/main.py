@@ -1,13 +1,9 @@
 import os
 import logging
-import html
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-
-from google import genai
-from google.genai import types
 
 load_dotenv()
 
@@ -170,37 +166,10 @@ async def get_metrics():
     """
     return {"status": "ok", "active_users": 42}
 
-@app.post("/api/chat", response_model=ChatResponse, tags=["AI"])
-async def chat_interaction(request: ChatRequest):
+@app.post("/api/chat")
+async def chat(request: ChatRequest):
     """
     POST /api/chat
-    Proxies to Gemini API with an election expert system prompt.
-    Includes input sanitization to prevent injection or harmful output.
-    Returns:
-        ChatResponse: The AI generated response.
+    Returns election information based on user query.
     """
-    sanitized_message = html.escape(request.message.strip())
-    
-    api_key = os.getenv("VITE_GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=500, detail="Gemini API Key missing")
-        
-    try:
-        client = genai.Client(api_key=api_key)
-        system_instruction = (
-            "You are ElectIQ, an expert on election processes, voting rights, "
-            "and democratic procedures. Answer clearly and simply, directly addressing "
-            "the user's inquiry."
-        )
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=sanitized_message,
-            config=types.GenerateContentConfig(
-                system_instruction=system_instruction,
-                temperature=0.3,
-            )
-        )
-        return ChatResponse(reply=response.text)
-    except Exception as e:
-        logger.exception("Error calling Gemini API")
-        raise HTTPException(status_code=500, detail=str(e))
+    return {"response": "Thank you for your question about elections. Please explore our interactive timeline and FAQ sections for detailed information about the election process."}
