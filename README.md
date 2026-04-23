@@ -89,9 +89,8 @@ A `Dockerfile` is provided in the `backend/` directory, along with a `cloudbuild
    ```
 2. For Frontend hosting, deploy the compiled `/dist` directory via **Firebase Hosting** or **Vercel** pointing to the newly generated Cloud Run backend URL.
 
-## Google Services Used
-- Google Cloud Run (deployment)
-- Google Cloud Logging (backend monitoring)  
-- Google Fonts API (typography)
-- Google Analytics (usage tracking)
-- Gemini API via Google AI Studio (chatbot)
+## Google Services Integration
+- **Gemini API** - Powers the AI election assistant chatbot
+- **Google Fonts** - Inter font family for typography  
+- **Google Analytics** - Usage tracking and analytics
+- **Google Cloud Run** - Referenced in cloudbuild.yaml for deployment

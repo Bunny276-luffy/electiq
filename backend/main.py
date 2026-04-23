@@ -1,5 +1,6 @@
 import os
 import logging
+import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -168,8 +169,12 @@ async def get_metrics():
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
-    """
-    POST /api/chat
-    Returns election information based on user query.
-    """
-    return {"response": "Thank you for your question about elections. Please explore our interactive timeline and FAQ sections for detailed information about the election process."}
+    api_key = os.getenv("GOOGLE_API_KEY")
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}",
+            json={"contents": [{"parts": [{"text": request.message}]}]}
+        )
+        data = response.json()
+        reply = data["candidates"][0]["content"]["parts"][0]["text"]
+        return {"response": reply}

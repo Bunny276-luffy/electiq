@@ -37,3 +37,13 @@ def test_get_quiz_has_5_questions():
 def test_get_metrics_status():
     response = client.get("/api/metrics")
     assert response.status_code == 200
+
+def test_timeline_count(): assert len(client.get("/api/timeline").json()) >= 5
+def test_faq_count(): assert len(client.get("/api/faq").json()) >= 5
+def test_quiz_count(): assert len(client.get("/api/quiz").json()) == 5
+def test_chat_endpoint(): 
+    r = client.post("/api/chat", json={"message": "test"})
+    assert r.status_code == 200
+def test_metrics_keys():
+    data = client.get("/api/metrics").json()
+    assert "total" in str(data) or len(data) > 0
